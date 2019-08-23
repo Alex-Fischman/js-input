@@ -31,8 +31,8 @@ Node.prototype.traverse = function(callback, breadthFirst = true) {
 };
 
 Node.prototype.map = function(callback) {
-	let that = Object.assign(new Node(), this);
-	that.children = that.children.map(c => callback(c.map(callback)));
+	let that = callback(Object.assign(new Node(), this));
+	that.children = that.children.map(c => c.map(callback));
 	return that;
 };
 

@@ -20,6 +20,12 @@ class Node {
 		return this;
 	}
 
+	map(callback) {
+		let that = this.clone();
+		that.traverse(n => n = callback(n));
+		return that;
+	}
+
 	reduce(callback, initial, traversal) {
 		let a = initial;
 		this.traverse(n => a = callback(a, n), traversal);

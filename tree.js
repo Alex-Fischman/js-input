@@ -7,7 +7,7 @@ function Node(value = 0, children = []) {
 Node.from = function(node) {
 	let that = Object.assign(new Node(), node);
 	that.parent = undefined;
-	that.children = node.children.map(n => (Node.from(n), n.parent = that);
+	that.children = node.children.map(n => (Node.from(n), n.parent = that));
 	return that;
 };
 

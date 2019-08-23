@@ -9,3 +9,6 @@ Touch can be accessed the same way as mouse, but you will need to include `touch
 
 # vector.js
 A simple 2D vector implemetation.
+
+# tree.js
+A simple tree implementation.

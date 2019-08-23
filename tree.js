@@ -4,16 +4,12 @@ function Node(value = 0, children = []) {
 	this.parent = undefined;
 }
 
-Node.prototype.push = function(...children) {
+Node.prototype.add = function(...children) {
 	for (child of children) {
 		child.parent = this;
 		this.children.push(child);
 	}
 	return this.children.length;
-};
-
-Node.prototype.pop = function() {
-	return this.children.pop();
 };
 
 Node.prototype.traverse = function(callback, breadthFirst = true) {
@@ -30,17 +26,18 @@ Node.prototype.traverse = function(callback, breadthFirst = true) {
 	}
 };
 
-Node.prototype.map = function(callback) {
-	let that = callback(Object.assign(new Node(), this));
-	that.children = that.children.map(c => c.map(callback));
+Node.prototype.clone = function() {
+	let that = Object.assign(new Node(), this);
+	that.children = that.children.map(c => c.clone());
 	return that;
 };
 
-Node.prototype.filter;
-Node.prototype.reduce;
+Node.prototype.includes = function(value) {
+	let result = false;
+	this.traverse(n => (n.value == value)? result = true: 0);
+	return result;
+};
 
-Node.prototype.every;
-Node.prototype.fill;
-Node.prototype.includes;
-Node.prototype.some;
+
+
 Node.prototype.find;

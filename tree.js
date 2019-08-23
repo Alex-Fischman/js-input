@@ -1,25 +1,40 @@
-function Node(value, children) {
-	this.value = value || 0;
-	this.children = children || [];
+function Node(value = 0, children = []) {
+	this.value = value;
+	this.children = children;
+	this.depth = 0;
+	this.breadth = 0;
 }
 
-Node.prototype.depth = function(callback) {
-	callback(this.value);
-	for (child of this.children) {
-		child.depth(callback);
+Node.prototype.push = function(...children) {
+	for (child of children) {
+		child.depth = this.depth + 1;
+		child.breadth = this.children.length;
+		this.children.push(child);
+	}
+	return this.children.length;
+};
+
+Node.prototype.pop = function() { return this.children.pop(); };
+
+Node.prototype.traverse = function(callback, breadthFirst = true) {
+	if (breadthFirst) {
+		// Breadth First Traversal
+		let nodes = [this];
+		while (nodes.length > 0) {
+			const current = nodes.shift();
+			callback(current.value, current.depth, current.breadth);
+			nodes = nodes.concat(current.children);
+		}
+	} else {
+		// Depth First Traversal
+		callback(this.value, this.depth, this.breadth);
+		this.children.forEach(c => c.traverse(callback, false));
 	}
 };
 
-Node.prototype.breadth = function(callback) {
-	let nodes = [this];
-	while (nodes.length > 0) {
-		const current = nodes.shift();
-		nodes = nodes.concat(current.children);
-		callback(current.value);
-	}
-}
-
-Node.prototype.map;
+Node.prototype.map = function(callback) {
+	this.traverse(function() {});
+};
 
 Node.prototype.filter;
 

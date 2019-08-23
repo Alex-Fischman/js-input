@@ -32,12 +32,12 @@ Node.prototype.clone = function() {
 	return that;
 };
 
-Node.prototype.includes = function(value) {
-	let result = false;
-	this.traverse(n => (n.value == value)? result = true: 0);
+Node.prototype.find = function(callback, breadthFirst = true) {
+	let result = undefined;
+	this.traverse(n => { if (callback(n) && result === undefined) { result = n; } }, breadthFirst);
 	return result;
 };
 
-
-
-Node.prototype.find;
+Node.prototype.includes = function(value) {
+	return Boolean(this.find(n => n.value === value));
+};

@@ -60,5 +60,10 @@ Node.prototype.find = function(callback, mode) {
 	return this.reduce((a, n) => a || (callback(n)? n: false), false, mode);
 };
 
-Node.prototype.every;
-Node.prototype.some;
+Node.prototype.every = function(callback) {
+	return this.reduce((a, n) => a && callback(n), true);
+};
+
+Node.prototype.some = function(callback) {
+	return this.reduce((a, n) => a || callback(n), false);
+};

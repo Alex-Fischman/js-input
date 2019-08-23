@@ -38,6 +38,7 @@ Node.prototype.traverse = function(callback, mode = Node.Traversal.BreadthFirst)
 		callback(this);
 		this.children.forEach(n => n.traverse(callback, false));
 	}
+	return this;
 };
 
 Node.prototype.reduce = function(callback, initial, mode) {
@@ -66,4 +67,8 @@ Node.prototype.every = function(callback) {
 
 Node.prototype.some = function(callback) {
 	return this.reduce((a, n) => a || callback(n), false);
+};
+
+Node.prototype.fill = function(value) {
+	return this.traverse(n => n.value = value);
 };

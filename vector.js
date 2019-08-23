@@ -1,36 +1,75 @@
-function Vector(x, y) {
-	this.x = x || 0;
-	this.y = y || 0;
-};
+class Vector {
+	constructor(x = 0, y = 0) {
+		this.x = x;
+		this.y = y;
+	}
 
-Vector.fromScalar = s => new Vector(s, s);
+	static fromScalar(scalar) {
+		return new Vector(s, s);
+	}
 
-Vector.fromArray = a => new Vector(a[0], a[1]);
-Vector.prototype.toArray = function() { return [this.x, this.y] };
+	static fromArray(array) {
+		return new Vector(...array);
+	}
 
-Vector.fromObject = o => new Vector(o.x, o.y);
-Vector.prototype.toObject = function() { return { x: this.x, y: this.y }; };
+	toArray() {
+		return [this.x, this.y];
+	}
 
-Vector.prototype.clone = function() { return new Vector(this.x, this.y); };
-Vector.prototype.copy = function(v) { this.x = v.x; this.y = v.y; return this; };
+	static fromObject(object) {
+		return new Vector(object.x, object.y);
+	}
 
-Vector.prototype.add = function(v) { this.x += v.x; this.y += v.y; return this; };
-Vector.prototype.sub = function(v) { this.x -= v.x; this.y -= v.y; return this; };
+	toObject() {
+		return { x: this.x, y: this.y };
+	}
 
-Vector.prototype.length = function() { return Math.sqrt(this.x * this.x + this.y * this.y); };
-Vector.prototype.scale = function(s) { this.x *= s;   this.y *= s;   return this; };
-Vector.prototype.normalize = function() { return this.scale(1 / this.length()); };
+	clone() {
+		return new Vector(this.x, this.y);
+	}
 
-Vector.prototype.distance = function(v) {
-	const d = this.clone().sub(v);
-	return Math.sqrt(d.x * d.x + d.y * d.y);
-};
+	add(vector) {
+		this.x += vector.x;
+		this.y += vector.y;
+		return this;
+	}
 
-Vector.prototype.dot = function(v) { return this.x * v.x + this.y * v.y; };
-Vector.prototype.cross = function(v) { return (this.x * v.y) - (this.y * v.x); };
+	sub(vector) {
+		this.x -= vector.x;
+		this.y -= vector.y;
+		return this;
+	}
 
-Vector.prototype.lerp = function(v, s) {
-	this.x = this.x * (1 - s) + v.x * s;
-	this.y = this.y * (1 - s) + v.y * s;
-	return this;
-};
+	get length() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+
+	scale(scalar) {
+		this.x *= scalar;
+		this.y *= scalar;
+		return this;
+	}
+
+	normalize() {
+		return this.scale(1 / this.length);
+	}
+
+	distance(vector) {
+		const difference = this.clone().sub(vector);
+		return difference.length;
+	}
+
+	dot(vector) {
+		return this.x * vector.x + this.y * vector.y;
+	}
+
+	cross(vector) {
+		return this.x * vector.y - this.y * vector.x;
+	}
+
+	lerp(vector, scalar) {
+		this.x = this.x * (1 - scalar) + vector.x * scalar;
+		this.y = this.y * (1 - scalar) + vector.y * scalar;
+		return this;
+	}
+}

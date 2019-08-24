@@ -9,44 +9,6 @@ class Node {
 		return this;
 	}
 
-	traverse(callback, traversal = Node.Traversal.BreadthFirst) {
-		traversal.call(this, callback);
-		return this;
-	}
-
-	map(callback) {
-		let that = this.clone();
-		that.traverse(n => n = callback(n));
-		return that;
-	}
-
-	reduce(callback, initial, traversal) {
-		let a = initial;
-		this.traverse(n => a = callback(a, n), traversal);
-		return a;
-	}
-
-	filter(callback) {
-		let that = this.clone();
-		that.traverse((n, t) => {
-			if (!callback(n)) {
-				const parent = that.find(m => m.children.includes(n));
-				if (!parent) return; // Can't return root node, but would rather make filter also return undefined
-				const index = parent.children.findIndex(o => o === n);
-				parent.children.splice(index, 1);
-			}
-		}, Node.Traversal.BreadthFirst);
-		return that;
-	}
-
-	every(callback) {
-		return this.reduce((a, n) => a && callback(n), true);
-	}
-
-	some(callback) {
-		return this.reduce((a, n) => a || callback(n), false);
-	}
-
 	// Can this be implemented using traverse?
 	clone() {
 		let that = Object.assign(new Node(), this);
@@ -54,12 +16,37 @@ class Node {
 		return that;
 	}
 
+	traverse(callback, traversal = Node.Traversal.BreadthFirst) {
+		traversal.call(this, callback);
+		return this;
+	}
+
+	map(callback) {
+		let that = this.clone();
+		that.traverse(n => n.value = callback(n.value));
+		return that;
+	}
+
+	reduce(callback, initial, traversal) {
+		let a = initial;
+		this.traverse(n => a = callback(a, n.value), traversal);
+		return a;
+	}
+
+	every(callback) {
+		return this.reduce((a, b) => a && callback(b), true);
+	}
+
+	some(callback) {
+		return this.reduce((a, b) => a || callback(b), false);
+	}
+
 	find(callback, traversal) {
-		return this.reduce((a, n) => a || (callback(n)? n: false), false, traversal);
+		return this.reduce((a, b) => a || (callback(b)? b: null), null, traversal);
 	}
 
 	includes(value) {
-		return this.some(n => n.value === value);
+		return this.some(a => a === value);
 	}
 }
 
@@ -67,9 +54,9 @@ Node.Traversal = {
 	BreadthFirst: function(callback) {
 		let nodes = [this];
 		while (nodes.length > 0) {
-			const current = nodes.shift();
-			callback(current);
-			nodes = nodes.concat(current.children);
+			callback(nodes[0]);
+			nodes = nodes.concat(nodes[0].children);
+			nodes.shift();
 		}      
 	},
 	DepthFirstPreOrder: function(callback) {

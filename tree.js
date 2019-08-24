@@ -4,12 +4,6 @@ class Node {
 		this.children = children;
 	}
 
-	add(...children) {
-		this.children = this.children.concat(children);
-		return this;
-	}
-
-	// Can this be implemented using traverse?
 	clone() {
 		let that = Object.assign(new Node(), this);
 		that.children = this.children.map(n => n.clone());
@@ -31,6 +25,12 @@ class Node {
 		let a = initial;
 		this.traverse(n => a = callback(a, n.value), traversal);
 		return a;
+	}
+
+	filter(callback) {
+		let that = this.clone();
+		that.traverse(n => n.children = n.children.filter(m => callback(m.value)), Node.Traversal.PostOrder);
+		return that;
 	}
 
 	every(callback) {
@@ -59,11 +59,11 @@ Node.Traversal = {
 			nodes.shift();
 		}      
 	},
-	DepthFirstPreOrder: function(callback) {
+	PreOrder: function(callback) {
 		callback(this);
 		this.children.forEach(n => n.traverse(callback, Node.Traversal.DepthFirstPreOrder));
 	},
-	DepthFirstPostOrder: function(callback) {
+	PostOrder: function(callback) {
 		this.children.forEach(n => n.traverse(callback, Node.Traversal.DepthFirstPostOrder));
 		callback(this);
 	}

@@ -4,13 +4,6 @@ class Node {
 		this.children = children;
 	}
 
-	// @TODO: implement using traverse
-	clone() {
-		let that = Object.assign(new Node(), this);
-		that.children = this.children.map(n => n.clone());
-		return that;
-	}
-
 	// @TODO: reconsider inorder call (should happen between each element?)
 	traverse({ levelorder, preorder, inorder, postorder }) {
 		if (levelorder) {
@@ -32,6 +25,13 @@ class Node {
 		return this;
 	}
 
+	// @TODO: implement using traverse?
+	clone() {
+		let that = Object.assign(new Node(), this);
+		that.children = this.children.map(n => n.clone());
+		return that;
+	}
+
 	map(callback) {
 		let that = this.clone();
 		that.traverse({ levelorder: n => n.value = callback(n.value) });
@@ -39,9 +39,9 @@ class Node {
 	}
 
 	// @TODO: if initial is undefined, set a to the root value and skip the root when iterating
-	reduce(callback, initial, traversal) {
+	reduce(callback, initial) {
 		let a = initial;
-		this.traverse({ levelorder: n => a = callback(a, n.value), traversal });
+		this.traverse({ levelorder: n => a = callback(a, n.value) });
 		return a;
 	}
 
@@ -53,15 +53,15 @@ class Node {
 	}
 
 	every(callback) {
-		return this.reduce((a, b) => a && callback(b), true);
+		return Boolean(this.reduce((a, b) => a && callback(b), true));
 	}
 
 	some(callback) {
-		return this.reduce((a, b) => a || callback(b), false);
+		return Boolean(this.reduce((a, b) => a || callback(b), false));
 	}
 
-	find(callback, traversal) {
-		return this.reduce((a, b) => a || (callback(b)? b: null), null, traversal);
+	find(callback) {
+		return this.reduce((a, b) => a || (callback(b)? b: null), null);
 	}
 
 	includes(value) {

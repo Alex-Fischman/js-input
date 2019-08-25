@@ -4,6 +4,7 @@ class Node {
 		this.children = children;
 	}
 
+	// @TODO: implement using traverse
 	clone() {
 		let that = Object.assign(new Node(), this);
 		that.children = this.children.map(n => n.clone());
@@ -21,12 +22,14 @@ class Node {
 		return that;
 	}
 
+	// @TODO: if initial is undefined, set a to the root value and skip the root when iterating
 	reduce(callback, initial, traversal) {
 		let a = initial;
 		this.traverse(n => a = callback(a, n.value), traversal);
 		return a;
 	}
 
+	// @TODO: implement similar to map, without using Array.prototype.filter
 	filter(callback) {
 		let that = this.clone();
 		that.traverse(n => n.children = n.children.filter(m => callback(m.value)), Node.Traversal.PostOrder);
@@ -50,6 +53,7 @@ class Node {
 	}
 }
 
+// @TODO: move into class block somehow
 Node.Traversal = {
 	BreadthFirst: function(callback) {
 		let nodes = [this];

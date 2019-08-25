@@ -11,30 +11,25 @@ class Node {
 		return that;
 	}
 
+	// @TODO: reconsider inorder call (should happen between each element?)
 	traverse({ levelorder, preorder, inorder, postorder }) {
 		if (levelorder) {
-			this.breadthFirstTraverse(levelorder);
+			let nodes = [this];
+			while (nodes.length > 0) {
+				const current = nodes.shift();
+				nodes = nodes.concat(current.children);
+				levelorder(current);
+			}
 		}
 		else {
-			this.depthFirstTraverse(preorder, inorder, postorder)
+			if (preorder) preorder(this);
+			for (let child of this.children) {
+				child.traverse({ preorder, inorder, postorder });
+				if (inorder) inorder(this);
+			}
+			if (postorder) postorder(this);
 		}
 		return this;
-	}
-
-	breadthFirstTraverse(callback) {
-		let nodes = [this];
-		while (nodes.length > 0) {
-			const current = nodes.shift();
-			nodes = nodes.concat(current.children);
-			callback(current);
-		}
-		return this;
-	}
-
-	depthFirstTraverse(preorder = a => a, inorder = a => a, postorder = a => a) {
-		preorder(this);
-		this.children.forEach(n => (n.depthFirstTraverse(preorder, inorder, postorder)), inorder(this));
-		postorder(this);
 	}
 
 	map(callback) {

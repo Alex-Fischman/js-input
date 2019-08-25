@@ -11,28 +11,49 @@ class Node {
 		return that;
 	}
 
-	traverse(callback, traversal = Node.Traversal.BreadthFirst) {
-		traversal.call(this, callback);
+	traverse({ levelorder, preorder, inorder, postorder }) {
+		if (levelorder) {
+			this.breadthFirstTraverse(levelorder);
+		}
+		else {
+			this.depthFirstTraverse(preorder, inorder, postorder)
+		}
 		return this;
+	}
+
+	breadthFirstTraverse(callback) {
+		let nodes = [this];
+		while (nodes.length > 0) {
+			const current = nodes.shift();
+			nodes = nodes.concat(current.children);
+			callback(current);
+		}
+		return this;
+	}
+
+	depthFirstTraverse(preorder = a => a, inorder = a => a, postorder = a => a) {
+		preorder(this);
+		this.children.forEach(n => (n.depthFirstTraverse(preorder, inorder, postorder)), inorder(this));
+		postorder(this);
 	}
 
 	map(callback) {
 		let that = this.clone();
-		that.traverse(n => n.value = callback(n.value));
+		that.traverse({ levelorder: n => n.value = callback(n.value) });
 		return that;
 	}
 
 	// @TODO: if initial is undefined, set a to the root value and skip the root when iterating
 	reduce(callback, initial, traversal) {
 		let a = initial;
-		this.traverse(n => a = callback(a, n.value), traversal);
+		this.traverse({ levelorder: n => a = callback(a, n.value), traversal });
 		return a;
 	}
 
 	// @TODO: implement similar to map, without using Array.prototype.filter
 	filter(callback) {
 		let that = this.clone();
-		that.traverse(n => n.children = n.children.filter(m => callback(m.value)), Node.Traversal.PostOrder);
+		that.traverse({ postorder: n => n.children = n.children.filter(m => callback(m.value)) });
 		return that;
 	}
 
@@ -52,23 +73,3 @@ class Node {
 		return this.some(a => a === value);
 	}
 }
-
-// @TODO: move into class block somehow
-Node.Traversal = {
-	BreadthFirst: function(callback) {
-		let nodes = [this];
-		while (nodes.length > 0) {
-			callback(nodes[0]);
-			nodes = nodes.concat(nodes[0].children);
-			nodes.shift();
-		}      
-	},
-	PreOrder: function(callback) {
-		callback(this);
-		this.children.forEach(n => n.traverse(callback, Node.Traversal.DepthFirstPreOrder));
-	},
-	PostOrder: function(callback) {
-		this.children.forEach(n => n.traverse(callback, Node.Traversal.DepthFirstPostOrder));
-		callback(this);
-	}
-};

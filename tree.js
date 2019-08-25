@@ -4,8 +4,10 @@ class Node {
 		this.children = children;
 	}
 
-	// @TODO: clean up inorder?
-	traverse({ levelorder, preorder, inorder, postorder }) {
+	// @TODO: get height()? other getters?
+
+	// @TODO: clean up recursion
+	traverse({ preorder, inorder, postorder, levelorder }) {
 		if (levelorder) {
 			let nodes = [this];
 			while (nodes.length > 0) {
@@ -16,10 +18,13 @@ class Node {
 		}
 		else {
 			if (preorder) preorder(this);
-			if (this.children.length > 0) {
-				this.children[0].traverse({ preorder, inorder, postorder });
-				if (inorder) inorder(this);
-				this.children.slice(1).forEach(n => n.traverse({ preorder, inorder, postorder }));
+			if (this.children.length) {
+				if (inorder) {
+					this.children[0].traverse({ preorder, inorder, postorder });
+					inorder(this);
+					this.children.slice(1).forEach(n => n.traverse({ preorder, inorder, postorder }));
+				}
+				else this.children.forEach(n => n.traverse({ preorder, inorder, postorder }));
 			}
 			if (postorder) postorder(this);
 		}
@@ -39,10 +44,9 @@ class Node {
 		return that;
 	}
 
-	// @TODO: if initial is undefined, set a to the root value and skip the root when iterating
 	reduce(callback, initial) {
 		let a = initial;
-		this.traverse({ levelorder: n => a = callback(a, n.value) });
+		this.traverse({	levelorder: n => a = (n === this && initial === undefined)? n.value: callback(a, n.value) });
 		return a;
 	}
 

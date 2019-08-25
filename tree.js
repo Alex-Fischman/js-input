@@ -5,8 +5,8 @@ class Node {
 	}
 
 	// @TODO: get height()? other getters?
+	// @TODO: is there a way to detect loops? is it worth complicating other stuff?
 
-	// @TODO: clean up recursion
 	traverse({ preorder, inorder, postorder, levelorder }) {
 		if (levelorder) {
 			let nodes = [this];
@@ -18,13 +18,9 @@ class Node {
 		}
 		else {
 			if (preorder) preorder(this);
-			if (this.children.length) {
-				if (inorder) {
-					this.children[0].traverse({ preorder, inorder, postorder });
-					inorder(this);
-					this.children.slice(1).forEach(n => n.traverse({ preorder, inorder, postorder }));
-				}
-				else this.children.forEach(n => n.traverse({ preorder, inorder, postorder }));
+			for (let i in this.children) {
+				this.children[i].traverse({ preorder, inorder, postorder });
+				if (inorder && i == 0) inorder(this);
 			}
 			if (postorder) postorder(this);
 		}
@@ -50,10 +46,10 @@ class Node {
 		return a;
 	}
 
-	// @TODO: implement similarly to map, without using Array.prototype.filter
 	filter(callback) {
 		let that = this.clone();
 		that.traverse({ postorder: n => n.children = n.children.filter(m => callback(m.value)) });
+		//that.traverse({ postorder: n => n = callback(n.value)? n: undefined }); // @TODO: What I want to say
 		return that;
 	}
 

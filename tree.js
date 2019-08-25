@@ -4,10 +4,7 @@ class Node {
 		this.children = children;
 	}
 
-	// @TODO: get height()? other getters?
-	// @TODO: is there a way to detect loops? is it worth complicating other stuff?
-
-	traverse({ preorder, inorder, postorder, levelorder }) {
+	traverse({ preorder, postorder, levelorder }) {
 		if (levelorder) {
 			let nodes = [this];
 			while (nodes.length > 0) {
@@ -18,17 +15,14 @@ class Node {
 		}
 		else {
 			if (preorder) preorder(this);
-			for (let i in this.children) {
-				this.children[i].traverse({ preorder, inorder, postorder });
-				if (inorder && i == 0) inorder(this);
-			}
+			this.children.forEach(n => n.traverse({ preorder, postorder }));
 			if (postorder) postorder(this);
 		}
 		return this;
 	}
 
-	// @TODO: implement using traverse?
 	clone() {
+		// @CURRENT: this is literally a preorder traversal so why is it so hard to implement using traverse
 		let that = Object.assign(new Node(), this);
 		that.children = this.children.map(n => n.clone());
 		return that;
@@ -49,7 +43,6 @@ class Node {
 	filter(callback) {
 		let that = this.clone();
 		that.traverse({ postorder: n => n.children = n.children.filter(m => callback(m.value)) });
-		//that.traverse({ postorder: n => n = callback(n.value)? n: undefined }); // @TODO: What I want to say
 		return that;
 	}
 

@@ -4,7 +4,7 @@ class Node {
 		this.children = children;
 	}
 
-	// @TODO: reconsider inorder call (should happen between each element?)
+	// @TODO: clean up inorder?
 	traverse({ levelorder, preorder, inorder, postorder }) {
 		if (levelorder) {
 			let nodes = [this];
@@ -16,9 +16,10 @@ class Node {
 		}
 		else {
 			if (preorder) preorder(this);
-			for (let child of this.children) {
-				child.traverse({ preorder, inorder, postorder });
+			if (this.children.length > 0) {
+				this.children[0].traverse({ preorder, inorder, postorder });
 				if (inorder) inorder(this);
+				this.children.slice(1).forEach(n => n.traverse({ preorder, inorder, postorder }));
 			}
 			if (postorder) postorder(this);
 		}
@@ -45,7 +46,7 @@ class Node {
 		return a;
 	}
 
-	// @TODO: implement similar to map, without using Array.prototype.filter
+	// @TODO: implement similarly to map, without using Array.prototype.filter
 	filter(callback) {
 		let that = this.clone();
 		that.traverse({ postorder: n => n.children = n.children.filter(m => callback(m.value)) });

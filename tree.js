@@ -24,7 +24,7 @@ class Node {
 	clone() {
 		const copy = n => Object.assign(new Node(), n);
 		let that = copy(this);
-		that.traverse({ levelorder: n => n.children = n.children.map(copy) });
+		that.traverse({ preorder: n => n.children = n.children.map(copy) });
 		return that;
 	}
 

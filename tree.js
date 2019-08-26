@@ -9,8 +9,8 @@ class Node {
 			let nodes = [this];
 			while (nodes.length > 0) {
 				const current = nodes.shift();
-				nodes = nodes.concat(current.children);
 				levelorder(current);
+				nodes = nodes.concat(current.children);
 			}
 		}
 		else {
@@ -42,7 +42,7 @@ class Node {
 
 	filter(callback) {
 		let that = this.clone();
-		that.traverse({ postorder: n => n.children = n.children.filter(m => callback(m.value)) });
+		that.traverse({ levelorder: n => n.children = n.children.filter(m => callback(m.value)) });
 		return that;
 	}
 
@@ -55,7 +55,7 @@ class Node {
 	}
 
 	find(callback) {
-		return this.reduce((a, b) => callback(b)? a.concat([b]): a, []);
+		return this.reduce((a, b) => (callback(b)? a.push(b): null, a), []);
 	}
 
 	includes(value) {

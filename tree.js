@@ -55,7 +55,7 @@ class Node {
 	}
 
 	find(callback) {
-		return this.reduce((a, b) => a || (callback(b)? b: null), null);
+		return this.reduce((a, b) => callback(b)? a.concat([b]): a, []);
 	}
 
 	includes(value) {

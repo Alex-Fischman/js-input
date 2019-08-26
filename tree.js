@@ -22,9 +22,9 @@ class Node {
 	}
 
 	clone() {
-		// @CURRENT: this is literally a preorder traversal so why is it so hard to implement using traverse
-		let that = Object.assign(new Node(), this);
-		that.children = this.children.map(n => n.clone());
+		const copy = n => Object.assign(new Node(), n);
+		let that = copy(this);
+		that.traverse({ levelorder: n => n.children = n.children.map(copy) });
 		return that;
 	}
 
